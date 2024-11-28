@@ -13,13 +13,10 @@ if ($arResult["isFormErrors"] == "Y") {
 }
 
 
-$arResult['getInputHtml'] = function($question, $arrVALUES, $isErrors) {
+$arResult['getInputHtml'] = function($question, $isErrors) {
     $id = $question['STRUCTURE'][0]['ID'];
     $type = $question['STRUCTURE'][0]['FIELD_TYPE'];
     $name = "form_{$type}_{$id}";
-    $value = isset($arrVALUES[$name]) ? htmlentities($arrVALUES[$name]) : '';
-    $required = $question['REQUIRED'] === 'Y' ? 'required' : '';
-    $class = ' ' . $question['STRUCTURE'][0]['FIELD_PARAM'];
     $errors = $isErrors;
     switch ($name)
     {
@@ -39,10 +36,6 @@ $arResult['getInputHtml'] = function($question, $arrVALUES, $isErrors) {
             $input = '<input class="input__input" type="tel" id="4" data-inputmask="\'mask\': \'+79999999999\', \'clearIncomplete\': \'true\'" maxlength="12" x-autocompletetype="phone-full" name="form_text_4" value="" required="" />';
         break;
         
-        // case 'text':
-        default:
-            $input = "<input class=\"call__form-input {$class}\" type=\"text\" name=\"{$name}\" value=\"{$value}\" {$required}>";
-        break;
     }
 
     return $input;

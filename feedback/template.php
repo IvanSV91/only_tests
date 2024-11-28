@@ -21,7 +21,7 @@ CJSCore::Init(['masked_input']); ?>
                         <label class="input__label" for="<?= strtolower($questionKey) ?>">
                             <div class="input__label-text"><?= $arResult["QUESTIONS"][$questionKey]['CAPTION'] ?>
                             <?= ($arResult["QUESTIONS"][$questionKey]['REQUIRED'] === 'Y' ? ' *' : '') ?>:</div>
-                            <?= $arResult['getInputHtml']($arResult["QUESTIONS"][$questionKey], $arResult['arrVALUES'], $arResult["isFormErrors"]) ?>
+                            <?= $arResult['getInputHtml']($arResult["QUESTIONS"][$questionKey], $arResult["isFormErrors"]) ?>
                             <?php if ($arResult["isFormErrors"] === "Y"): ?>
                             <div class="input__notification"><?= $arResult["FORM_ERRORS"][$questionKey] ?? ''; ?></div>
                             <?php endif; ?>
