@@ -1,7 +1,8 @@
 <?php if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
 
-CJSCore::Init(['masked_input']); ?>
-
+CJSCore::Init(['masked_input']); 
+?>
+<?=$arResult['WEB_FORM_ID']?>
 <?=$arResult["FORM_HEADER"]?>
 
     <div class="contact-form">
@@ -11,7 +12,7 @@ CJSCore::Init(['masked_input']); ?>
             ваших требований</div>
         </div>
 
-        <input type="hidden" name="web_form_submit" value="Y">
+        <input type="hidden" name="web_form_submit" value="Y" />
 
         <form class="contact-form__form">
             <div class="contact-form__form-inputs">
@@ -21,7 +22,7 @@ CJSCore::Init(['masked_input']); ?>
                         <label class="input__label" for="<?= strtolower($questionKey) ?>">
                             <div class="input__label-text"><?= $arResult["QUESTIONS"][$questionKey]['CAPTION'] ?>
                             <?= ($arResult["QUESTIONS"][$questionKey]['REQUIRED'] === 'Y' ? ' *' : '') ?>:</div>
-                            <?= $arResult['getInputHtml']($arResult["QUESTIONS"][$questionKey], $arResult["isFormErrors"]) ?>
+                            <?= $arResult['getInputHtml']($arResult["QUESTIONS"][$questionKey], $arResult['arrVALUES'], $arResult["isFormErrors"]) ?>
                             <?php if ($arResult["isFormErrors"] === "Y"): ?>
                             <div class="input__notification"><?= $arResult["FORM_ERRORS"][$questionKey] ?? ''; ?></div>
                             <?php endif; ?>
@@ -46,22 +47,22 @@ CJSCore::Init(['masked_input']); ?>
                     данных&raquo;.
                 </div>
 
-                <?php if (($arResult["isFormNote"] == "Y") && ($_SERVER["REQUEST_METHOD"] == "POST")) : ?>
+                <?php if ($_REQUEST["formresult"]) : ?>
                     <button class="form-button contact-form__bottom-button success">
-                        <div class="form-button__title">Отправлено</div>
+                    <div class="form-button__title">Отправлено</div>
                     </button>
-                <?php elseif ($arResult["isFormErrors"] == "Y") : ?>
+                <?php elseif ($arResult["isFormErrors"] == "Y"): ?>
                     <button class="form-button contact-form__bottom-button error">
-                        <div class="form-button__title">Ошибка отправки</div>
+                    <div class="form-button__title">Ошибка отправки</div>
                     </button>
-                <?php else : ?>
+                <?php else: ?>
                     <button class="form-button contact-form__bottom-button">
-                        <div class="form-button__title">Отправить</div>
+                    <div class="form-button__title">Оставить заявку</div>
                     </button>
                 <?php endif; ?>
             </div>
         </form>
-    </div>
+
 
 <script>
     BX.ready(function() {
@@ -80,3 +81,5 @@ CJSCore::Init(['masked_input']); ?>
 </script>
 
 <?=$arResult["FORM_FOOTER"]?>
+[bitrix@myserver feedback]$ 
+
