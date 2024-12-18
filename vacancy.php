@@ -1,30 +1,28 @@
+<?php
 require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_before.php");
-
 if (!$USER->IsAdmin()) {
     LocalRedirect('/');
 }
-
 \Bitrix\Main\Loader::includeModule('iblock');
 $row = 1;
 $IBLOCK_ID = 28;
 $el = new CIBlockElement;
 
-function getPropEnumList($IBLOCK_ID) {
+function getPropEnumList($IBLOCK_ID){
     $arProps = [];
     $rsProp = CIBlockPropertyEnum::GetList(
         ["SORT" => "ASC", "VALUE" => "ASC"],
         ['IBLOCK_ID' => $IBLOCK_ID]
     );
-
     while ($arProp = $rsProp->Fetch()) {
         $key = trim($arProp['VALUE']);
         $arProps[$arProp['PROPERTY_CODE']][$key] = $arProp['ID'];
-    }
-
+    } 
+	
     return $arProps;
 }
 
-function deleteElements($IBLOCK_ID) {
+function deleteElements($IBLOCK_ID){
     $rsElements = CIBlockElement::GetList([], ['IBLOCK_ID' => $IBLOCK_ID], false, false, ['ID']);
     while ($element = $rsElements->GetNext()) {
         CIBlockElement::Delete($element['ID']);
@@ -34,47 +32,44 @@ function deleteElements($IBLOCK_ID) {
 function propsArrayCsv() {
     $props = [];
     $row = 1;
-
     if (($handle = fopen("vacancy.csv", "r")) !== false) {
         while (($data = fgetcsv($handle, 1000, ",")) !== false) {
             if ($row == 1) {
                 $row++;
                 continue;
             }
-            
             $props[] = [
-                'ACTIVITY' => trim($data[9]),
-                'FIELD' => trim($data[11]),
-                'OFFICE' => trim($data[1]),
-                'LOCATION' => trim($data[2]),
-                'REQUIRE' => trim($data[4]),
-                'DUTY' => trim($data[5]),
-                'CONDITIONS' => trim($data[6]),
-                'EMAIL' => trim($data[12]),
+                'ACTIVITY' => $data[9],
+                'FIELD' => $data[11],
+                'OFFICE' => $data[1],
+                'LOCATION' => $data[2],
+                'REQUIRE' => $data[4],
+                'DUTY' => $data[5],
+                'CONDITIONS' => $data[6],
+                'EMAIL' => $data[12],
                 'DATE' => date('d.m.Y'),
-                'TYPE' => trim($data[8]),
+                'TYPE' => $data[8],
                 'SALARY_TYPE' => '',
-                'SALARY_VALUE' => trim($data[7]),
-                'SCHEDULE' => trim($data[10]),
-                'NAME' => trim($data[3]),
-                'END' => $data[14]
-            ];
+                'SALARY_VALUE' => $data[7],
+                'SCHEDULE' => $data[10],
+                'NAME' => $data[3],
+	    	'END' => $data[14]
+	    ];
             $row++;
         }
         fclose($handle);
     }
-
     return $props;
 }
 
 function addEnumValueToList($value, &$arProps, $key, $IBLOCK_ID) {
     $rsProperty = CIBlockProperty::GetList([], ['CODE' => $key, 'IBLOCK_ID' => $IBLOCK_ID]);
-
+    
     if ($arProperty = $rsProperty->Fetch()) {
         $propertyId = $arProperty['ID'];
-
+        
         $rsEnum = CIBlockPropertyEnum::GetList([], ['PROPERTY_ID' => $propertyId, 'VALUE' => $value]);
-
+        
         if (!$arEnum = $rsEnum->Fetch()) {
             $enum = new CIBlockPropertyEnum();
             $arFields = [
@@ -95,13 +90,13 @@ function addEnumValueToList($value, &$arProps, $key, $IBLOCK_ID) {
             return $arEnum['ID'];
         }
     }
-
+    
     return false; 
 }
 
 function addProductToIblock($iblockId, $props, $userId) {
     $el = new CIBlockElement();
-
+    
     $arLoadProductArray = [
         "MODIFIED_BY" => $userId,
         "IBLOCK_SECTION_ID" => false,
@@ -123,7 +118,6 @@ function handleProps($props, $arProps, $IBLOCK_ID, $userId) {
         foreach ($tProps as $key => &$value) {
             $value = trim($value);
             $value = str_replace('\n', '', $value);
-
             if (stripos($value, '•') !== false) {
                 $value = explode('•', $value);
                 array_splice($value, 0, 1);
@@ -133,7 +127,6 @@ function handleProps($props, $arProps, $IBLOCK_ID, $userId) {
             } elseif (isset($arProps[$key])) {
                 $arSimilar = [];
                 $propValueKeys = ['ACTIVITY', 'FIELD', 'LOCATION', 'TYPE', 'SCHEDULE'];
-
                 foreach ($arProps[$key] as $propKey => $propVal) {
                     if ($key == 'OFFICE') {
                         $value = mb_strtolower($value, 'UTF-8');
@@ -148,7 +141,6 @@ function handleProps($props, $arProps, $IBLOCK_ID, $userId) {
                         $value = $propVal;
                     }
                 }
-
                 foreach ($propValueKeys as $check) {
                     if ($key == $check && !is_numeric($value)) {
                         echo "check: " . $value . "<br>";
@@ -190,5 +182,4 @@ function handleProps($props, $arProps, $IBLOCK_ID, $userId) {
 $arProps = getPropEnumList($IBLOCK_ID); 
 deleteElements($IBLOCK_ID);
 $props = propsArrayCsv();
-handleProps($props, $arProps, $IBLOCK_ID, $USER->GetID());
-
+handleProps($props, $arProps, $IBLOCK_ID, $USER->GetID());	
