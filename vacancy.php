@@ -4,7 +4,7 @@ if (!$USER->IsAdmin()) {
     LocalRedirect('/');
 }
 \Bitrix\Main\Loader::includeModule('iblock');
-$row = 1;
+
 $IBLOCK_ID = 28;
 $el = new CIBlockElement;
 
